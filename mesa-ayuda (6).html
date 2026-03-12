@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mesa de Ayuda · Tecnología &amp; Eficiencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#ffffff;--surface:#fff;--border:rgba(0,0,0,0.08);--text:#111827;--muted:#6b7280;--op:#3ec87a;--blue:#2eb8e6;--orange:#e07b00;--lime:#8dc63f;--navy:#2c3e6b;--red:#e74c3c;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)!important;font-family:var(--fb);font-size:14px;line-height:1.6;color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(0,0,0,0.04) 1px,transparent 1px);background-size:26px 26px;pointer-events:none;z-index:0}
+.scprog{position:fixed;top:0;left:0;height:3px;z-index:300;width:0%;background:linear-gradient(90deg,var(--orange),var(--op),var(--blue));transition:width .1s linear}
+.snav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(0,0,0,0.07);transform:translateY(-110%);transition:transform .35s ease}
+.snav.on{transform:translateY(0)}
+.snav-inner{max-width:100%;padding:0 14px;display:flex;gap:2px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.snav-inner::-webkit-scrollbar{display:none}
+.snav a{font-family:var(--fh);font-size:11px;font-weight:700;padding:13px 11px;text-decoration:none;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent;transition:color .2s,border-color .2s;letter-spacing:.03em}
+.snav a:hover,.snav a.act{border-color:var(--orange);color:var(--orange)}
+.wrap{position:relative;z-index:1;max-width:100%;padding:20px 14px 60px}
+.fi{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+.fi.on{opacity:1;transform:translateY(0)}
+.fi:nth-child(2){transition-delay:.07s}.fi:nth-child(3){transition-delay:.14s}.fi:nth-child(4){transition-delay:.21s}
+.sec{font-family:var(--fh);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:20px;scroll-margin-top:60px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* HERO */
+.hero{border-radius:16px;overflow:hidden;margin-bottom:28px;display:grid;grid-template-columns:1fr 1fr;min-height:200px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.hero-left{background:linear-gradient(135deg,#0f172a,#1e3a5f,#1a4b8c);padding:36px 32px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.hero-left::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(46,184,230,0.08)}
+.hero-left::after{content:'';position:absolute;bottom:-30px;left:-20px;width:120px;height:120px;border-radius:50%;background:rgba(62,200,122,0.07)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--op);background:rgba(62,200,122,0.12);border:1px solid rgba(62,200,122,0.25);padding:4px 12px;border-radius:2px;margin-bottom:14px;width:fit-content}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--op);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-title{font-family:var(--fh);font-size:clamp(22px,3vw,36px);font-weight:800;color:#fff;line-height:1.05;letter-spacing:-.02em;margin-bottom:10px;position:relative;z-index:1}
+.hero-title em{font-style:normal;color:var(--blue)}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.7);line-height:1.55;max-width:320px;position:relative;z-index:1}
+.hero-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--fh);font-size:13px;font-weight:800;background:var(--orange);color:#fff;padding:13px 24px;border-radius:8px;text-decoration:none;transition:background .2s,transform .2s,box-shadow .2s;position:relative;z-index:1;width:fit-content;margin-top:20px;cursor:pointer;border:none}
+.hero-btn:hover{background:#c96e00;transform:translateY(-2px);box-shadow:0 6px 20px rgba(224,123,0,.4)}
+.hero-btn-arrow{font-size:16px;transition:transform .2s}
+.hero-btn:hover .hero-btn-arrow{transform:translateX(3px)}
+.hero-right{background:linear-gradient(135deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.hero-right::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 30px,rgba(255,255,255,0.015) 30px,rgba(255,255,255,0.015) 31px)}
+/* IT SVG illustration */
+.it-illustration{width:100%;max-width:280px}
+
+/* KPIs */
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.kpi{background:var(--surface);border:1px solid var(--border);box-shadow:0 1px 5px rgba(0,0,0,0.06);padding:12px 18px;border-radius:8px;display:flex;flex-direction:column;gap:1px;min-width:120px;transition:box-shadow .2s,transform .2s;flex:1}
+.kpi:hover{box-shadow:0 5px 14px rgba(0,0,0,0.1);transform:translateY(-3px)}
+.kpi .n{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1}
+.kpi .l{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+
+/* TIPOS DE SOLICITUD */
+.tipos-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:40px}
+.tipo-card{border-radius:14px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.08);transition:transform .2s,box-shadow .2s;cursor:default}
+.tipo-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.13)}
+.tipo-head{padding:20px 22px 16px;display:flex;align-items:flex-start;gap:14px}
+.tipo-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.ti-red{background:rgba(231,76,60,0.15)}
+.ti-blue{background:rgba(46,184,230,0.15)}
+.tipo-label{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.tl-red{color:var(--red)}.tl-blue{color:var(--blue)}
+.tipo-name{font-family:var(--fh);font-size:15px;font-weight:800;line-height:1.2;color:var(--text)}
+.tipo-body{padding:0 22px 20px;display:flex;flex-direction:column;gap:7px}
+.tipo-example{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.45;color:var(--muted);background:var(--bg);border-radius:6px;padding:8px 10px}
+.te-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.td-red{background:var(--red)}.td-blue{background:var(--blue)}
+.tipo-card.tc-red{background:var(--surface);border:1px solid rgba(231,76,60,0.12)}
+.tipo-card.tc-blue{background:var(--surface);border:1px solid rgba(46,184,230,0.15)}
+.tipo-divider{height:3px;background:var(--red)}.td-bar-blue{background:var(--blue)}
+
+/* PROCESO FLUJO */
+.flujo-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 22px 28px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:40px;overflow:hidden}
+.flujo-title{font-family:var(--fh);font-size:13px;font-weight:800;margin-bottom:28px;display:flex;align-items:center;gap:8px}
+.flujo-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
+/* Background track */
+.flujo-steps::before{content:'';position:absolute;top:21px;left:10%;right:10%;height:3px;background:#e9edf5;border-radius:4px;z-index:0}
+/* Animated fill line */
+.flujo-steps::after{content:'';position:absolute;top:21px;left:10%;height:3px;border-radius:4px;z-index:0;background:linear-gradient(90deg,var(--orange),#e0a000,var(--lime),var(--op),var(--blue));width:0%;transition:width 2s cubic-bezier(.4,0,.2,1)}
+.flujo-steps.animated::after{width:80%}
+.flujo-step{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
+.fs-num{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:15px;font-weight:800;color:#fff;margin-bottom:12px;position:relative;transition:transform .3s,box-shadow .3s;background:#cbd5e1}
+.fs-num.active{transform:scale(1.12);box-shadow:0 0 0 6px rgba(255,255,255,1),0 0 0 9px currentColor}
+.fn-1{background:var(--orange);color:var(--orange)}.fn-2{background:#e0a000;color:#e0a000}.fn-3{background:var(--lime);color:var(--lime)}.fn-4{background:var(--op);color:var(--op)}.fn-5{background:var(--blue);color:var(--blue)}
+.fn-1 span,.fn-2 span,.fn-3 span,.fn-4 span,.fn-5 span{color:#fff}
+/* Pulse ring on active step */
+@keyframes pulse-ring{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.7);opacity:0}}
+.fs-num.active::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid currentColor;animation:pulse-ring 1.4s ease-out infinite}
+/* Step entry animation */
+@keyframes step-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.flujo-step{opacity:0;transform:translateY(16px)}
+.flujo-step.step-visible{animation:step-in .45s ease forwards}
+.flujo-step:nth-child(1).step-visible{animation-delay:.1s}
+.flujo-step:nth-child(2).step-visible{animation-delay:.35s}
+.flujo-step:nth-child(3).step-visible{animation-delay:.6s}
+.flujo-step:nth-child(4).step-visible{animation-delay:.85s}
+.flujo-step:nth-child(5).step-visible{animation-delay:1.1s}
+.fs-title{font-family:var(--fh);font-size:11px;font-weight:700;margin-bottom:4px;line-height:1.2;color:var(--text)}
+.fs-desc{font-size:10.5px;color:var(--muted);line-height:1.4;padding:0 4px}
+
+/* FAQ */
+.faq-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:40px}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);transition:box-shadow .2s}
+.faq-item:hover{box-shadow:0 4px 14px rgba(0,0,0,.09)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;gap:12px;user-select:none}
+.faq-q-text{font-family:var(--fh);font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px}
+.faq-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.fi-orange{background:rgba(224,123,0,0.1)}
+.fi-green{background:rgba(62,200,122,0.1)}
+.fi-blue{background:rgba(46,184,230,0.1)}
+.fi-navy{background:rgba(44,62,107,0.08)}
+.faq-arrow{font-size:11px;color:var(--muted);transition:transform .3s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 18px 16px;font-size:12.5px;color:var(--muted);line-height:1.65;border-top:1px solid var(--border)}
+.faq-a-inner p{padding-top:12px}
+.faq-a-inner ul{padding-top:8px;padding-left:16px;display:flex;flex-direction:column;gap:4px}
+.faq-a-inner li{list-style:none;display:flex;align-items:flex-start;gap:7px}
+.faq-a-inner li::before{content:'·';color:var(--orange);font-weight:700;flex-shrink:0}
+
+/* RECUERDA BOX */
+.recuerda{background:linear-gradient(135deg,rgba(44,62,107,0.06),rgba(46,184,230,0.06));border:1px solid rgba(46,184,230,0.2);border-radius:14px;padding:22px 24px;margin-bottom:40px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.recuerda-title{font-family:var(--fh);font-size:13px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.recuerda-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rec-card{border-radius:10px;padding:16px 18px}
+.rc-consulta{background:rgba(46,184,230,0.08);border:1px solid rgba(46,184,230,0.2)}
+.rc-ticket{background:rgba(224,123,0,0.07);border:1px solid rgba(224,123,0,0.2)}
+.rec-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.rec-type{font-family:var(--fh);font-size:12px;font-weight:800}
+.rt-blue{color:var(--blue)}.rt-orange{color:var(--orange)}
+.rec-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.rb-blue{background:rgba(46,184,230,0.12);color:#0d6e94;border:1px solid rgba(46,184,230,0.25)}
+.rb-orange{background:rgba(224,123,0,0.1);color:#b85a00;border:1px solid rgba(224,123,0,0.25)}
+.rec-examples{display:flex;flex-direction:column;gap:5px}
+.rec-ex{font-size:11.5px;color:var(--muted);display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.rec-ex::before{content:'"';color:var(--blue);font-weight:700;flex-shrink:0;font-size:14px;line-height:1}
+.rec-ex.ro::before{color:var(--orange)}
+
+/* CTA BOTTOM */
+.cta-bottom{background:linear-gradient(135deg,#1a3d6e,#1e5fa8);border-radius:14px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.cta-text h2{font-family:var(--fh);font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
+.cta-text p{font-size:12.5px;color:rgba(255,255,255,.72);line-height:1.5;max-width:380px}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--fh);font-size:13px;font-weight:800;background:var(--orange);color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;transition:background .2s,transform .2s,box-shadow .2s;cursor:pointer;border:none;white-space:nowrap}
+.cta-btn:hover{background:#c96e00;transform:translateY(-2px);box-shadow:0 6px 20px rgba(224,123,0,.4)}
+</style>
+</head>
+<body>
+<div class="scprog" id="prog"></div>
+<nav class="snav" id="snav">
+  <div class="snav-inner">
+    <a href="#sec-tipos">🎫 Tipos de Solicitud</a>
+    <a href="#sec-flujo">🔄 Flujo de atención</a>
+    <a href="#sec-faq">❓ Preguntas frecuentes</a>
+    <a href="#sec-recuerda">💡 Consulta vs Ticket</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero fi">
+    <div class="hero-left">
+      <div>
+        <div class="hero-badge">⚙️ Área de Tecnología &amp; Eficiencia · 2026</div>
+        <h1 class="hero-title">Mesa de<br><em>Ayuda</em> TI</h1>
+        <p class="hero-sub">Centraliza la recepción y gestión de incidentes, solicitudes y mejoras, asegurando trazabilidad, priorización y atención oportuna con foco en continuidad operativa.</p>
+      </div>
+      <a class="hero-btn" href="https://forms.office.com/pages/responsepage.aspx?id=F7Dzf1sqQkCi7ZVcaDjvKSyXLnqXGaNHtbjWp4YckBdUMTVHVjFYRlpNUzdCSU40WVMzQUNVRlU4TyQlQCN0PWcu&route=shorturl" target="_blank">
+        🎫 Crear Solicitud <span class="hero-btn-arrow">→</span>
+      </a>
+    </div>
+    <div class="hero-right" style="display:flex;align-items:center;justify-content:center;">
+      <a href="https://bolivarc.sharepoint.com/sites/InteligenciaArtificial-NN-TicketeraTecnologia/_layouts/15/embed.aspx?UniqueId=d1e1358f-8998-48e5-bcee-31f5e7e7da61&embed=%7B%22ust%22%3Afalse%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-decoration:none;position:relative;z-index:1;">
+        <div style="width:80px;height:80px;background:rgba(46,184,230,0.15);border:2px solid rgba(46,184,230,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s;">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><polygon points="12,8 26,16 12,24" fill="#2eb8e6"/></svg>
+        </div>
+        <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#2eb8e6;letter-spacing:.05em;">▶ Ver Guía en Video</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.4);">Se abre en nueva pestaña</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- KPIS -->
+  <div class="kpis fi">
+    <div class="kpi"><span class="n" style="color:var(--op)">100%</span><span class="l">Trazabilidad</span></div>
+    <div class="kpi"><span class="n" style="color:var(--navy)">L–V</span><span class="l">Horario de atención</span></div>
+  </div>
+
+  <!-- TIPOS DE SOLICITUD -->
+  <p class="sec fi" id="sec-tipos">🎫 ¿Qué tipo de solicitud necesitas crear?</p>
+  <div class="tipos-grid fi">
+
+    <!-- INCIDENTE -->
+    <div class="tipo-card tc-red">
+      <div class="tipo-divider" style="height:4px;background:var(--red)"></div>
+      <div class="tipo-head">
+        <div class="tipo-icon ti-red">🚨</div>
+        <div>
+          <div class="tipo-label tl-red">Incidente / Problema</div>
+          <div class="tipo-name">"Algo que no está funcionando"</div>
+        </div>
+      </div>
+      <div class="tipo-body">
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:6px">Úsalo cuando hay una <strong style="color:var(--text)">falla, interrupción, error o comportamiento inesperado</strong>: algo no responde o no funciona como debería.</p>
+        <div class="tipo-example"><div class="te-dot td-red"></div>"Mi correo no envía mensajes"</div>
+        <div class="tipo-example"><div class="te-dot td-red"></div>"No puedo acceder a Intelisis"</div>
+        <div class="tipo-example"><div class="te-dot td-red"></div>"La computadora no enciende"</div>
+        <div class="tipo-example"><div class="te-dot td-red"></div>"El sistema está muy lento desde ayer"</div>
+      </div>
+    </div>
+
+    <!-- SOLICITUD -->
+    <div class="tipo-card tc-blue">
+      <div style="height:4px;background:var(--blue)"></div>
+      <div class="tipo-head">
+        <div class="tipo-icon ti-blue">✨</div>
+        <div>
+          <div class="tipo-label tl-blue">Solicitud / Mejora</div>
+          <div class="tipo-name">"Algo nuevo o un cambio que necesitas"</div>
+        </div>
+      </div>
+      <div class="tipo-body">
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:6px">Úsalo cuando necesitas <strong style="color:var(--text)">crear, habilitar o ajustar algo</strong>: una mejora, configuración, alta, permiso o cambio planificado.</p>
+        <div class="tipo-example"><div class="te-dot td-blue"></div>"Necesito acceso a la carpeta de contratos"</div>
+        <div class="tipo-example"><div class="te-dot td-blue"></div>"Requiero instalar un programa en mi equipo"</div>
+        <div class="tipo-example"><div class="te-dot td-blue"></div>"Crear usuario para nuevo colaborador"</div>
+        <div class="tipo-example"><div class="te-dot td-blue"></div>"Necesito que me asignen una licencia de Teams"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLUJO DE ATENCION -->
+  <p class="sec fi" id="sec-flujo">🔄 ¿Cómo funciona el proceso de atención?</p>
+  <div class="flujo-wrap fi" id="flujo-wrap">
+    <div class="flujo-title">🔄 Flujo de atención de un ticket</div>
+    <div class="flujo-steps" id="flujo-steps">
+      <div class="flujo-step">
+        <div class="fs-num fn-1"><span>1</span></div>
+        <div class="fs-title">Creas tu solicitud</div>
+        <div class="fs-desc">Llenas el formulario con descripción y evidencia</div>
+      </div>
+      <div class="flujo-step">
+        <div class="fs-num fn-2"><span>2</span></div>
+        <div class="fs-title">Recepción y clasificación</div>
+        <div class="fs-desc">TI recibe, prioriza y asigna al especialista</div>
+      </div>
+      <div class="flujo-step">
+        <div class="fs-num fn-3"><span>3</span></div>
+        <div class="fs-title">Análisis y atención</div>
+        <div class="fs-desc">El especialista trabaja en la solución</div>
+      </div>
+      <div class="flujo-step">
+        <div class="fs-num fn-4"><span>4</span></div>
+        <div class="fs-title">Resolución</div>
+        <div class="fs-desc">Se aplica la solución y se notifica por correo</div>
+      </div>
+      <div class="flujo-step">
+        <div class="fs-num fn-5"><span>5</span></div>
+        <div class="fs-title">Cierre y trazabilidad</div>
+        <div class="fs-desc">Se registra el caso para auditoría y seguimiento</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <p class="sec fi" id="sec-faq">❓ Preguntas frecuentes</p>
+  <div class="faq-wrap fi">
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-text"><div class="faq-icon fi-orange">❓</div>¿Qué es la Mesa de Ayuda?</div>
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">
+        <div class="faq-a-inner"><p>La Mesa de Ayuda centraliza la recepción y gestión de <strong>incidentes, solicitudes y mejoras</strong> del área de Tecnología, asegurando trazabilidad, priorización y atención oportuna con foco en la continuidad operativa de toda la organización.</p></div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-text"><div class="faq-icon fi-orange">📎</div>¿Qué pasa si no adjunto evidencia?</div>
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Es posible que el especialista tenga que pedirte información adicional, y eso puede <strong>alargar el tiempo de atención</strong>.</p>
+          <ul style="margin-top:8px">
+            <li>En casos relacionados con <strong>Intelisis</strong>, adjuntar evidencia es indispensable.</li>
+            <li>Se recomienda incluir capturas de pantalla, mensajes de error o el paso a paso del problema.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-text"><div class="faq-icon fi-blue">📧</div>¿Debo responder los correos automáticos?</div>
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p><strong>No es necesario.</strong> Los correos automáticos son notificaciones del sistema y no requieren respuesta.</p>
+          <p>Sin embargo, si el analista te escribe directamente o solicita información adicional (un dato, un documento o una confirmación), sí debes responder para no retrasar la atención de tu ticket.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-text"><div class="faq-icon fi-green">📊</div>¿Puedo ver el estado de mi ticket?</div>
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <p>Sí. Recibirás notificaciones automáticas en cada cambio de estado importante de tu solicitud.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-text"><div class="faq-icon fi-navy">⏱️</div>¿Cuánto tiempo tardan en atenderme?</div>
+        <span class="faq-arrow">▼</span>
+      </div>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          <ul>
+            <li><strong>Incidente crítico</strong> (sistema caído, sin acceso): prioridad inmediata, mismo día.</li>
+            <li><strong>Incidente general</strong> (error, falla): hasta <strong>24 horas hábiles</strong>.</li>
+            <li><strong>Solicitud / Mejora</strong>: hasta <strong>48 horas hábiles</strong> según complejidad.</li>
+            <li>Los tiempos pueden variar según la carga de trabajo y la complejidad del caso.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RECUERDA: CONSULTA VS TICKET -->
+  <p class="sec fi" id="sec-recuerda">💡 Recuerda: No todo mensaje es un ticket</p>
+  <div class="recuerda fi">
+    <div class="recuerda-title">😊 ¿Cuándo crear un ticket y cuándo es solo una consulta?</div>
+    <div class="recuerda-grid">
+      <div class="rec-card rc-consulta">
+        <div class="rec-head">
+          <span style="font-size:20px">💬</span>
+          <div class="rec-type rt-blue">Consulta</div>
+          <span class="rec-badge rb-blue">No genera ticket</span>
+        </div>
+        <div class="rec-examples">
+          <div class="rec-ex">¿Dónde encuentro...?</div>
+          <div class="rec-ex">¿Cómo se hace...?</div>
+          <div class="rec-ex">¿Tengo duda sobre...?</div>
+          <div class="rec-ex">¿Cuál es el procedimiento para...?</div>
+        </div>
+      </div>
+      <div class="rec-card rc-ticket">
+        <div class="rec-head">
+          <span style="font-size:20px">🎫</span>
+          <div class="rec-type rt-orange">Ticket</div>
+          <span class="rec-badge rb-orange">Crear solicitud</span>
+        </div>
+        <div class="rec-examples">
+          <div class="rec-ex ro">Necesito que...</div>
+          <div class="rec-ex ro">Hay un error en...</div>
+          <div class="rec-ex ro">Se requiere soporte para...</div>
+          <div class="rec-ex ro">No puedo acceder a...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BOTTOM -->
+  <div class="cta-bottom fi">
+    <div class="cta-text">
+      <h2>¿Listo para crear tu solicitud?</h2>
+      <p>Accede al portal de Mesa de Ayuda, describe tu caso con la mayor cantidad de detalle posible y adjunta evidencia para una atención más rápida.</p>
+    </div>
+    <a class="cta-btn" href="https://forms.office.com/pages/responsepage.aspx?id=F7Dzf1sqQkCi7ZVcaDjvKSyXLnqXGaNHtbjWp4YckBdUMTVHVjFYRlpNUzdCSU40WVMzQUNVRlU4TyQlQCN0PWcu&route=shorturl" target="_blank">
+      🎫 Crear Solicitud →
+    </a>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var prog=document.getElementById('prog');
+  var snav=document.getElementById('snav');
+  window.addEventListener('scroll',function(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    prog.style.width=(h>0?(window.scrollY/h*100):0)+'%';
+    snav.classList.toggle('on',window.scrollY>120);
+  });
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');obs.unobserve(e.target);}});
+    },{threshold:0.08});
+    document.querySelectorAll('.fi').forEach(function(el){obs.observe(el);});
+  } else {
+    document.querySelectorAll('.fi').forEach(function(el){el.classList.add('on');});
+  }
+})();
+
+// FLUJO ANIMATION
+(function(){
+  var flujoWrap = document.getElementById('flujo-wrap');
+  var flujoSteps = document.getElementById('flujo-steps');
+  if(!flujoWrap || !flujoSteps) return;
+  var steps = flujoSteps.querySelectorAll('.flujo-step');
+  var nums = flujoSteps.querySelectorAll('.fs-num');
+  var triggered = false;
+
+  function runAnimation(){
+    if(triggered) return;
+    triggered = true;
+    // Reveal steps one by one
+    steps.forEach(function(s){ s.classList.add('step-visible'); });
+    // Fill the line after a short delay
+    setTimeout(function(){ flujoSteps.classList.add('animated'); }, 200);
+    // Activate each circle sequentially
+    var delays = [100, 350, 600, 850, 1100];
+    nums.forEach(function(n, i){
+      setTimeout(function(){ n.classList.add('active'); }, delays[i] + 400);
+    });
+  }
+
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ runAnimation(); obs.disconnect(); }
+    });
+  }, {threshold: 0.3});
+  obs.observe(flujoWrap);
+})();
+
+function toggleFaq(el){
+  var item=el.parentElement;
+  var isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i){i.classList.remove('open');});
+  if(!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
